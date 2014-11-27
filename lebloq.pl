@@ -1,4 +1,4 @@
-:- ensure_loaded(['utilities.pl', 'printing.pl', 'lists.pl', 'board.pl']).
+:- ensure_loaded(['utilities.pl', 'printing.pl', 'lists.pl', 'board.pl', 'sockets.pl']).
 :- use_module(library(random)).
 
 %

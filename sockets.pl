@@ -14,30 +14,33 @@ server_loop(Stream) :-
 	repeat,
 		read(Stream, ClientRequest),
 		write('Received: '), write(ClientRequest), nl, 
-		%server_input(ClientRequest, ServerReply),
+		server_input(ClientRequest, ServerReply),
 		format(Stream, '~q.~n', [ServerReply]),
 		write('Send: '), write(ServerReply), nl, 
 		flush_output(Stream),
 	(ClientRequest == bye; ClientRequest == end_of_file), !.
 
-server_input(initialize(BoardSizeX, BoardSizeY), ok(Board)):- 
+server_input(initialize(BoardSizeX, BoardSizeY), ok(Board)) :- 
 	createBoard(BoardSizeX, BoardSizeY, Board), 
 	!.
 
-server_input(validateFirstTurn(Board, PieceType, PieceOrientation, PieceX, PieceY), ok(ScoredBoard)) :-
+server_input(initialize(BoardSizeX, BoardSizeY), fail) :-
+	!.
+
+server_input(playFT(Board, PieceType, PieceOrientation, PieceX, PieceY, ScoringPlayer, BoardSizeX, BoardSizeY), ok(ScoredBoard)) :-
 	validateFirstTurn(Board, PieceType, PieceOrientation, PieceX, PieceY, NewBoard),
 	fillBoardWithScoring(NewBoard, BoardSizeX, BoardSizeY, 0, 0, ScoringPlayer, ScoredBoard),
 	!.
 
-server_input(validateFirstTurn(Board, PieceType, PieceOrientation, PieceX, PieceY, NewBoard), fail) :-
+server_input(playFT(Board, PieceType, PieceOrientation, PieceX, PieceY, ScoringPlayer, BoardSizeX, BoardSizeY), fail) :-
 	!.
 
-server_input(validateTurn(Board, PieceType, PieceOrientation, PieceX, PieceY, NewBoard), ok(ScoredBoard)) :-
+server_input(play(Board, PieceType, PieceOrientation, PieceX, PieceY, NewBoard), ok(ScoredBoard)) :-
 	validateTurn(Board, PieceType, PieceOrientation, PieceX, PieceY, NewBoard),
 	fillBoardWithScoring(NewBoard, BoardSizeX, BoardSizeY, 0, 0, ScoringPlayer, ScoredBoard),
 	!.
 
-server_input(validateTurn(Board, PieceType, PieceOrientation, PieceX, PieceY, NewBoard), fail) :-
+server_input(play(Board, PieceType, PieceOrientation, PieceX, PieceY, NewBoard), fail) :-
 	!.
 
 server_input(checkGameOver(Board, BoardSizeX, BoardSizeY), winner(Winner)) :-		%	Missing Winner
