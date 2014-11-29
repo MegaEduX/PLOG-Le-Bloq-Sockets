@@ -43,21 +43,13 @@ server_input(play(Board, PieceType, PieceOrientation, PieceX, PieceY, NewBoard),
 server_input(play(Board, PieceType, PieceOrientation, PieceX, PieceY, NewBoard), fail) :-
 	!.
 
-server_input(checkGameOver(Board, BoardSizeX, BoardSizeY), winner(Winner)) :-		%	Missing Winner
+server_input(checkWinner(Board, BoardSizeX, BoardSizeY), Winner) :-		%	Missing Winner
 	checkForAvailableTurns(Board, BoardSizeX, BoardSizeY),
+	checkForWinner(Board, BoardSizeX, BoardSizeY, 0, 0, 0, 0, Winner),
 	!.
 
-server_input(checkGameOver(Board, BoardSizeX, BoardSizeY), false) :-
+server_input(checkWinner(Board, BoardSizeX, BoardSizeY), 0) :-
 	!.
-
-/*server_input(execute(Mov, Board), ok(NewBoard)):- 
-	valid_move(Mov, Board),
-	execute_move(Mov, Board, NewBoard), !.
-server_input(calculate(Level, J, Board), ok(Mov, NewBoard)):- 
-	calculate_move(Level, J, Board, Mov),
-	execute_move(Mov, Board, NewBoard), !.
-server_input(game_end(Board), ok(Winner)):- 
-	end_game(Board, Winner), !.*/
 
 server_input(bye, ok) :-
 	!.
