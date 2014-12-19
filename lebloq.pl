@@ -469,6 +469,8 @@ boardFill(Board, _, _, 0, _, _, Board) :-
 	!.
 
 boardFill(Board, PieceType, Width, Height, X, Y, NewBoard) :-
+	write('[bF] Filling... ('), write(Width), write(', '), write(Height), write(', '), write(X), write(', '), write(Y), writeln(')'), 
+	
 	getListObjectAtIndex(Board, Y, Line),
 	
 	lineFill(Line, PieceType, Width, X, NewLine),
@@ -480,9 +482,15 @@ boardFill(Board, PieceType, Width, Height, X, Y, NewBoard) :-
 	boardFill(ReturnedBoard, PieceType, Width, NewHeight, X, NewY, NewBoard).
 
 fillBoardWithNewBlock(Board, PieceType, PieceOrientation, PieceX, PieceY, NewBoard) :-
+	writeln('[Fill Board] Starting...'),
+
 	getPieceWidthAndHeight(PieceType, PieceOrientation, PieceWidth, PieceHeight),
 	
-	boardFill(Board, PieceType, PieceWidth, PieceHeight, PieceX, PieceY, NewBoard).
+	write('[Fill Board] Filling... ('), write(PieceX), write(', '), write(PieceY), write(', '), write(PieceWidth), write(', '), write(PieceHeight), writeln(')'), 
+	
+	boardFill(Board, PieceType, PieceWidth, PieceHeight, PieceX, PieceY, NewBoard),
+	
+	writeln('[Fill Board] Done!').
 
 %
 %	Turn Validation
@@ -491,18 +499,18 @@ fillBoardWithNewBlock(Board, PieceType, PieceOrientation, PieceX, PieceY, NewBoa
 validateTurn(Board, PieceType, PieceOrientation, PieceX, PieceY, NewBoard) :-
 	nl,
 	
-	%	writeln('[Turn Validation] Checking for free space...'),
+	writeln('[Turn Validation] Checking for free space...'),
 	pieceHasFreeSpace(Board, PieceType, PieceOrientation, PieceX, PieceY),
 	
-	%	writeln('[Turn Validation] Checking for adjacent blocks of the same type...'),
+	writeln('[Turn Validation] Checking for adjacent blocks of the same type...'),
 	pieceHasNoAdjacentSameBlock(Board, PieceType, PieceOrientation, PieceX, PieceY),
 	
-	%	writeln('[Turn Validation] Checking for at least a block nearby...'),
+	writeln('[Turn Validation] Checking for at least a block nearby...'),
 	pieceHasAdjacentBlock(Board, PieceType, PieceOrientation, PieceX, PieceY),
 	
 	%	And after all validations...
 	
-	%	writeln('[Turn Validation] Filling board...'),
+	writeln('[Turn Validation] Filling board...'),
 	
 	fillBoardWithNewBlock(Board, PieceType, PieceOrientation, PieceX, PieceY, NewBoard),
 	
