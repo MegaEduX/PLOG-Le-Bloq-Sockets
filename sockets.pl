@@ -1,4 +1,5 @@
-:-use_module(library(sockets)).
+:- use_module(library(sockets)).
+:- ensure_loaded(['utilities.pl']).
 
 port(60001).
 
@@ -49,11 +50,27 @@ server_input(play(Board, PieceType, PieceOrientation, PieceX, PieceY, ScoringPla
 	
 	!.
 
-server_input(play(Board, PieceType, PieceOrientation, PieceX, PieceY, NewBoard, BoardSizeX, BoardSizeY), fail) :-
+server_input(play(Board, PieceType, PieceOrientation, PieceX, PieceY, ScoringPlayer, BoardSizeX, BoardSizeY), fail) :-
+	!.
+
+server_input(playAI(Board, ScoringPlayer, BoardSizeX, BoardSizeY), ok(ScoredBoard)) :-
+	FixedScoring is ScoringPlayer + 3,
+	
+	playComputerino(Board, ScoringPlayer, BoardSizeX, BoardSizeY, 1, ScoringPlayer, NewBoard),
+	fillBoardWithScoring(NewBoard, BoardSizeX, BoardSizeY, 0, 0, FixedScoring, ScoredBoard),
+	
+	!.
+	
+server_input(playAIFT(Board, ScoringPlayer, BoardSizeX, BoardSizeY), ok(ScoredBoard)) :-
+	FixedScoring is ScoringPlayer + 3,
+
+	playComputerino(Board, ScoringPlayer, BoardSizeX, BoardSizeY, 0, ScoringPlayer, NewBoard),
+	fillBoardWithScoring(NewBoard, BoardSizeX, BoardSizeY, 0, 0, FixedScoring, ScoredBoard),
+
 	!.
 
 server_input(checkWinner(Board, BoardSizeX, BoardSizeY), Winner) :-		%	Missing Winner
-	checkForAvailableTurns(Board, BoardSizeX, BoardSizeY),
+	not(checkForAvailableTurns(Board, BoardSizeX, BoardSizeY)),
 	checkForWinner(Board, BoardSizeX, BoardSizeY, 0, 0, 0, 0, Winner),
 	write('Sending winner: '), write(Winner), nl,
 	
